@@ -9,6 +9,8 @@ services:
       - "8080:8080"
     networks:
       - app-network
+    depends_on:
+      - mongo
     environment:
       MONGO_URL: mongodb://localhost@mongo:27017
   mongo:

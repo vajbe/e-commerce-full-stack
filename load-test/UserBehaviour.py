@@ -24,6 +24,12 @@ class UserBehavior(TaskSet):
         if response.status_code == 200:
             self.user["token"] = response.json().get("token")
 
+    def logout(self):
+        if "token" in self.user:
+            headers = {"Authorization": f"Bearer {self.user['token']}"}
+            self.client.post("/api/logout", headers=headers)
+            self.user.pop("token", None)
+
     @task(1)
     def view_products(self):
         self.client.get("/api/products")
@@ -33,6 +39,11 @@ class UserBehavior(TaskSet):
         if "token" in self.user:
             headers = {"Authorization": f"Bearer {self.user['token']}"}
             self.client.get("/api/orders", headers=headers)
+
+    @task(3)
+    def perform_logout_and_login(self):
+        self.logout()
+        self.login()
 
 class WebsiteUser(HttpUser):
     tasks = [UserBehavior]
