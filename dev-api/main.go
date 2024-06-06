@@ -1,14 +1,23 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
 
-	_, err := GetDBConnection()
+	mongoURL := os.Getenv("MONGO_URL")
+
+	clientOptions := options.Client().ApplyURI(mongoURL)
+
+	_, err := mongo.Connect(context.TODO(), clientOptions)
 
 	if err != nil {
 		log.Printf("Failed to connect to DB %s", err)
